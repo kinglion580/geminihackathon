@@ -1,0 +1,9 @@
+Article 14, including the technical measures put in place to facilitate the interpretation of the outputs of AI systems by the deployers; specifications on input data, as appropriate;
+
+4.
+
+A description of the appropriateness of the performance metrics for the specific AI system;
+
+5.
+
+A detailed description of the risk management system in accordance with

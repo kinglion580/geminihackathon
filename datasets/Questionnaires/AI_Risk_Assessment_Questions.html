@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #333;
+            max-width: 100%;
+        }
+        h1 {
+            color: #1a365d;
+            border-bottom: 3px solid #2c5282;
+            padding-bottom: 10px;
+            font-size: 24pt;
+        }
+        h2 {
+            color: #2c5282;
+            border-bottom: 2px solid #4299e1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            font-size: 16pt;
+        }
+        h3 {
+            color: #2b6cb0;
+            margin-top: 20px;
+            font-size: 13pt;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #e2e8f0;
+            margin: 20px 0;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #cbd5e0;
+            padding: 10px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #2c5282;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+        ul {
+            margin: 10px 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+        strong {
+            color: #1a365d;
+        }
+        code {
+            background-color: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+        }
+        .checkbox {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #4299e1;
+            border-radius: 3px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        p {
+            margin: 10px 0;
+        }
+        em {
+            color: #e53e3e;
+            font-style: normal;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<h1>AI Risk Assessment Questionnaire</h1>
+
+<p><strong>Based on EU AI Act and NIST AI RMF</strong></p>
+
+<hr>
+
+<h2>Section 1: Initial Classification Questions</h2>
+
+<h3>1.1 AI System Use Case</h3>
+
+<p><strong>Q1. What is the primary use case of your AI system?</strong></p>
+
+<p>Select one:</p>
+<ul>
+<li><span class="checkbox"></span>Social Scoring (evaluating individuals based on social behavior)</li>
+<li><span class="checkbox"></span>Subliminal Manipulation (techniques beyond user awareness)</li>
+<li><span class="checkbox"></span>Vulnerability Exploitation (targeting age, disability, social situation)</li>
+<li><span class="checkbox"></span>Facial Recognition Scraping (building databases from internet/CCTV)</li>
+<li><span class="checkbox"></span>Predictive Policing (crime prediction for individuals)</li>
+<li><span class="checkbox"></span>Emotion Recognition</li>
+<li><span class="checkbox"></span>Biometric Identification</li>
+<li><span class="checkbox"></span>Credit Scoring</li>
+<li><span class="checkbox"></span>Recruitment Screening</li>
+<li><span class="checkbox"></span>Performance Monitoring</li>
+<li><span class="checkbox"></span>Chatbot / Conversational AI</li>
+<li><span class="checkbox"></span>Deepfake / Synthetic Content Generation</li>
+<li><span class="checkbox"></span>Content Generation (text, image, audio)</li>
+<li><span class="checkbox"></span>Recommendation System</li>
+<li><span class="checkbox"></span>Game AI</li>
+<li><span class="checkbox"></span>Spam Filter</li>
+<li><span class="checkbox"></span>Other: _________________________</li>
+</ul>
+
+<hr>
+
+<h3>1.2 Deployment Context</h3>
+
+<p><strong>Q2. Who is deploying this AI system?</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Public Authority (government, public institution)</li>
+<li><span class="checkbox"></span>Private Sector Organization</li>
+<li><span class="checkbox"></span>Other: _________________________</li>
+</ul>
+
+<p><strong>Q3. In what context will this AI system be deployed?</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Workplace (employee-facing)</li>
+<li><span class="checkbox"></span>Educational Institution</li>
+<li><span class="checkbox"></span>Healthcare Setting</li>
+<li><span class="checkbox"></span>Law Enforcement</li>
+<li><span class="checkbox"></span>General/Consumer-facing</li>
+<li><span class="checkbox"></span>Other: _________________________</li>
+</ul>
+
+<hr>
+
+<h3>1.3 AI System Category</h3>
+
+<p><strong>Q4. What category does your AI system fall under?</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Biometrics (identification, categorization, emotion recognition)</li>
+<li><span class="checkbox"></span>Critical Infrastructure (transport, water, gas, electricity, digital)</li>
+<li><span class="checkbox"></span>Education (access decisions, exam evaluation, behavior assessment)</li>
+<li><span class="checkbox"></span>Employment (recruitment, job ads, performance, promotion/termination)</li>
+<li><span class="checkbox"></span>Essential Services (credit, insurance, emergency services)</li>
+<li><span class="checkbox"></span>Law Enforcement (risk assessment, evidence evaluation, profiling)</li>
+<li><span class="checkbox"></span>Migration/Asylum (border control, visa/asylum processing)</li>
+<li><span class="checkbox"></span>Justice/Democracy (judicial assistance, election influence)</li>
+<li><span class="checkbox"></span>General Purpose (no specific high-risk category)</li>
+</ul>
+
+<hr>
+
+<h2>Section 2: Prohibited Practices Screening</h2>
+
+<h3>2.1 Social Scoring Check</h3>
+
+<p><strong>Q5. Does your AI system evaluate or score natural persons based on their social behavior or personal characteristics for general purposes by public authorities?</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Yes → <strong>PROHIBITED: System cannot be deployed</strong></li>
+<li><span class="checkbox"></span>No → Continue to next question</li>
+</ul>
+
+<hr>
+
+<h3>2.2 Manipulation Check</h3>
+
+<p><strong>Q6. Does your AI system use subliminal techniques beyond a person's consciousness to materially distort behavior in a manner that causes harm?</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Yes → <strong>PROHIBITED: System cannot be deployed</strong></li>
+<li><span class="checkbox"></span>No → Continue to next question</li>
+</ul>
+
+<hr>
+
+<h3>2.3 Vulnerability Exploitation Check</h3>
+
+<p><strong>Q7. Does your AI system exploit vulnerabilities of specific groups (age, disability, social/economic situation) to materially distort behavior?</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Yes → <strong>PROHIBITED: System cannot be deployed</strong></li>
+<li><span class="checkbox"></span>No → Continue to next question</li>
+</ul>
+
+<hr>
+
+<h3>2.4 Facial Recognition Database Check</h3>
+
+<p><strong>Q8. Does your AI system involve untargeted scraping of facial images from the internet or CCTV to build facial recognition databases?</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Yes → <strong>PROHIBITED: System cannot be deployed</strong></li>
+<li><span class="checkbox"></span>No → Continue to next question</li>
+</ul>
+
+<hr>
+
+<h3>2.5 Predictive Policing Check</h3>
+
+<p><strong>Q9. Does your AI system predict crime risk for individuals based SOLELY on profiling or personality traits?</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Yes → <strong>PROHIBITED: System cannot be deployed</strong></li>
+<li><span class="checkbox"></span>No → Continue to next question</li>
+</ul>
+
+<hr>
+
+<h3>2.6 Emotion Recognition in Workplace/Education</h3>
+
+<p><strong>Q10. If your system uses emotion recognition in workplace or educational settings, is it for medical or safety purposes?</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Not applicable (no emotion recognition in workplace/education)</li>
+<li><span class="checkbox"></span>Yes, for medical or safety purposes → <strong>PERMITTED with conditions</strong></li>
+<li><span class="checkbox"></span>No, for other purposes → <strong>PROHIBITED: System cannot be deployed in this context</strong></li>
+</ul>
+
+<hr>
+
+<h2>Section 3: High-Risk Classification</h2>
+
+<p><em>Answer these questions if your system passed the prohibited practices screening.</em></p>
+
+<h3>3.1 Biometrics Category</h3>
+
+<p><strong>Q11. Does your AI system involve:</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Remote biometric identification systems</li>
+<li><span class="checkbox"></span>Biometric categorization (inferring race, political opinions, religion)</li>
+<li><span class="checkbox"></span>Emotion recognition systems</li>
+<li><span class="checkbox"></span>None of the above</li>
+</ul>
+
+<p><em>If any selected (except "None") → Classified as HIGH-RISK</em></p>
+
+<hr>
+
+<h3>3.2 Critical Infrastructure Category</h3>
+
+<p><strong>Q12. Is your AI system a safety component in:</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Road traffic management</li>
+<li><span class="checkbox"></span>Water, gas, heating, or electricity supply</li>
+<li><span class="checkbox"></span>Digital infrastructure</li>
+<li><span class="checkbox"></span>None of the above</li>
+</ul>
+
+<p><em>If any selected (except "None") → Classified as HIGH-RISK</em></p>
+
+<hr>
+
+<h3>3.3 Education Category</h3>
+
+<p><strong>Q13. Does your AI system make decisions regarding:</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Access to educational or vocational institutions</li>
+<li><span class="checkbox"></span>Evaluation of learning outcomes (exams)</li>
+<li><span class="checkbox"></span>Behavior assessment in educational institutions</li>
+<li><span class="checkbox"></span>None of the above</li>
+</ul>
+
+<p><em>If any selected (except "None") → Classified as HIGH-RISK</em></p>
+
+<hr>
+
+<h3>3.4 Employment Category</h3>
+
+<p><strong>Q14. Does your AI system involve:</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Recruitment or candidate filtering</li>
+<li><span class="checkbox"></span>Job advertisement targeting</li>
+<li><span class="checkbox"></span>Application evaluation</li>
+<li><span class="checkbox"></span>Promotion or termination decisions</li>
+<li><span class="checkbox"></span>Task allocation based on behavior/traits</li>
+<li><span class="checkbox"></span>Employee performance monitoring</li>
+<li><span class="checkbox"></span>None of the above</li>
+</ul>
+
+<p><em>If any selected (except "None") → Classified as HIGH-RISK</em></p>
+
+<hr>
+
+<h3>3.5 Essential Services Category</h3>
+
+<p><strong>Q15. Does your AI system involve:</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Credit scoring or creditworthiness assessment</li>
+<li><span class="checkbox"></span>Risk assessment for life or health insurance</li>
+<li><span class="checkbox"></span>Emergency services dispatch prioritization</li>
+<li><span class="checkbox"></span>None of the above</li>
+</ul>
+
+<p><em>If any selected (except "None") → Classified as HIGH-RISK</em></p>
+
+<hr>
+
+<h3>3.6 Law Enforcement Category</h3>
+
+<p><strong>Q16. Does your AI system assist with:</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Individual risk assessment (re-offending probability)</li>
+<li><span class="checkbox"></span>Polygraph or similar detection tools</li>
+<li><span class="checkbox"></span>Evidence reliability assessment</li>
+<li><span class="checkbox"></span>Crime prediction for individuals or groups</li>
+<li><span class="checkbox"></span>Profiling during criminal investigations</li>
+<li><span class="checkbox"></span>None of the above</li>
+</ul>
+
+<p><em>If any selected (except "None") → Classified as HIGH-RISK</em></p>
+
+<hr>
+
+<h3>3.7 Migration/Asylum Category</h3>
+
+<p><strong>Q17. Does your AI system involve:</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Polygraph or similar tools at borders</li>
+<li><span class="checkbox"></span>Risk assessment for security, health, or irregular entry</li>
+<li><span class="checkbox"></span>Travel document authenticity verification</li>
+<li><span class="checkbox"></span>Asylum, visa, or residence application processing</li>
+<li><span class="checkbox"></span>None of the above</li>
+</ul>
+
+<p><em>If any selected (except "None") → Classified as HIGH-RISK</em></p>
+
+<hr>
+
+<h3>3.8 Justice/Democracy Category</h3>
+
+<p><strong>Q18. Does your AI system:</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Assist judicial research or interpretation of law</li>
+<li><span class="checkbox"></span>Apply law to facts in legal cases</li>
+<li><span class="checkbox"></span>Facilitate alternative dispute resolution</li>
+<li><span class="checkbox"></span>Influence elections or referendums</li>
+<li><span class="checkbox"></span>None of the above</li>
+</ul>
+
+<p><em>If any selected (except "None") → Classified as HIGH-RISK</em></p>
+
+<hr>
+
+<h2>Section 4: Limited Risk (Transparency) Check</h2>
+
+<p><em>Answer if NOT classified as High-Risk</em></p>
+
+<h3>4.1 Transparency Obligations</h3>
+
+<p><strong>Q19. Does your AI system involve:</strong></p>
+
+<ul>
+<li><span class="checkbox"></span>Chatbot interactions where users might not know they're interacting with AI</li>
+<li><span class="checkbox"></span>Emotion recognition (not in workplace/education)</li>
+<li><span class="checkbox"></span>Deepfake or synthetic content generation</li>
+<li><span class="checkbox"></span>AI-generated content (text, image, audio, video)</li>
+<li><span class="checkbox"></span>None of the above</li>
+</ul>
+
+<p><em>If any selected (except "None") → Classified as LIMITED RISK</em></p>
+
+<hr>
+
+<h2>Section 5: Risk Classification Result</h2>
+
+<p>Based on your answers:</p>
+
+<table>
+<tr><th>Classification</th><th>Result</th></tr>
+<tr><td><strong>UNACCEPTABLE</strong></td><td>If any "PROHIBITED" answer in Section 2</td></tr>
+<tr><td><strong>HIGH-RISK</strong></td><td>If any high-risk category in Section 3</td></tr>
+<tr><td><strong>LIMITED RISK</strong></td><td>If any transparency obligation in Section 4</td></tr>
+<tr><td><strong>MINIMAL RISK</strong></td><td>If none of the above apply</td></tr>
+</table>
+<hr>
+
+<h2>Section 6: High-Risk Compliance Requirements</h2>
+
+<p><em>Complete only if classified as HIGH-RISK</em></p>
+
+<h3>6.1 Risk Management System (Article 9)</h3>
+
+<ul>
+<li><span class="checkbox"></span>Continuous risk management process established</li>
+<li><span class="checkbox"></span>Known and foreseeable risks identified</li>
+<li><span class="checkbox"></span>Risk levels estimated</li>
+<li><span class="checkbox"></span>Emerging risks evaluated</li>
+<li><span class="checkbox"></span>Mitigation measures adopted</li>
+<li><span class="checkbox"></span>Decisions documented</li>
+<li><span class="checkbox"></span>Testing conducted against defined metrics</li>
+<li><span class="checkbox"></span>Testing with representative data</li>
+<li><span class="checkbox"></span>Testing for foreseeable misuse</li>
+<li><span class="checkbox"></span>Independent party testing (where appropriate)</li>
+</ul>
+
+<h3>6.2 Data Governance (Article 10)</h3>
+
+<ul>
+<li><span class="checkbox"></span>Training data documented</li>
+<li><span class="checkbox"></span>Data quality management implemented</li>
+<li><span class="checkbox"></span>Bias examination conducted</li>
+<li><span class="checkbox"></span>Data relevance verified</li>
+<li><span class="checkbox"></span>Data representativeness checked</li>
+<li><span class="checkbox"></span>Special category data handling compliant</li>
+</ul>
+
+<h3>6.3 Technical Documentation (Article 11)</h3>
+
+<ul>
+<li><span class="checkbox"></span>General description documented</li>
+<li><span class="checkbox"></span>Intended purpose specified</li>
+<li><span class="checkbox"></span>Design specifications created</li>
+<li><span class="checkbox"></span>System architecture documented</li>
+<li><span class="checkbox"></span>Data requirements specified</li>
+<li><span class="checkbox"></span>Training methodologies documented</li>
+<li><span class="checkbox"></span>Validation procedures defined</li>
+<li><span class="checkbox"></span>Performance metrics recorded</li>
+<li><span class="checkbox"></span>Risk management system documented</li>
+<li><span class="checkbox"></span>Cybersecurity measures documented</li>
+<li><span class="checkbox"></span>Modification log maintained</li>
+</ul>
+
+<h3>6.4 Record Keeping (Article 12)</h3>
+
+<ul>
+<li><span class="checkbox"></span>Automatic logging implemented</li>
+<li><span class="checkbox"></span>Operational logs captured</li>
+<li><span class="checkbox"></span>User identity recorded</li>
+<li><span class="checkbox"></span>Date/time of use logged</li>
+<li><span class="checkbox"></span>Reference input data stored</li>
+<li><span class="checkbox"></span>Output data retained</li>
+<li><span class="checkbox"></span>Appropriate retention period defined</li>
+</ul>
+
+<h3>6.5 Transparency (Article 13)</h3>
+
+<ul>
+<li><span class="checkbox"></span>Clear instructions for use created</li>
+<li><span class="checkbox"></span>Provider identity disclosed</li>
+<li><span class="checkbox"></span>System capabilities documented</li>
+<li><span class="checkbox"></span>System limitations disclosed</li>
+<li><span class="checkbox"></span>Accuracy levels specified</li>
+<li><span class="checkbox"></span>Foreseeable risks documented</li>
+<li><span class="checkbox"></span>Human oversight measures described</li>
+<li><span class="checkbox"></span>Maintenance requirements specified</li>
+</ul>
+
+<h3>6.6 Human Oversight (Article 14)</h3>
+
+<ul>
+<li><span class="checkbox"></span>System designed for human oversight</li>
+<li><span class="checkbox"></span>Operators can understand capabilities and limitations</li>
+<li><span class="checkbox"></span>Operators can monitor operation correctly</li>
+<li><span class="checkbox"></span>Measures to detect automation bias</li>
+<li><span class="checkbox"></span>Operators can interpret outputs correctly</li>
+<li><span class="checkbox"></span>Override/interrupt capability provided</li>
+<li><span class="checkbox"></span>Option to disregard AI output available</li>
+</ul>
+
+<hr>
+
+<h2>Section 7: Additional Requirements for Biometrics</h2>
+
+<p><em>Complete only if system involves biometrics</em></p>
+
+<ul>
+<li><span class="checkbox"></span>Fundamental rights impact assessment conducted</li>
+<li><span class="checkbox"></span>System registered in EU AI database</li>
+</ul>
+
+<hr>
+
+<h2>Appendix: Risk Level Summary</h2>
+
+<table>
+<tr><th>Risk Level</th><th>Requirements</th></tr>
+<tr><td><strong>Unacceptable</strong></td><td>System BANNED - Discontinue development</td></tr>
+<tr><td><strong>High-Risk</strong></td><td>Full compliance with Articles 9-15 required</td></tr>
+<tr><td><strong>Limited Risk</strong></td><td>Disclosure and transparency mechanisms required</td></tr>
+<tr><td><strong>Minimal Risk</strong></td><td>Voluntary codes of conduct recommended</td></tr>
+</table>
+<hr>
+
+<p><em>Document generated based on EU AI Act requirements and NIST AI RMF guidance</em></p>
+
+<p><em>Date: _______________</em></p>
+
+<p><em>Assessed by: _______________</em></p>
+
+<p><em>Signature: _______________</em></p>
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+# Governance AI Agent Configuration
+
+agent:
+  name: governance-ai-agent
+  description: Comprehensive AI governance agent with access to all AI Act skills
+  model: opus  # opus, sonnet, haiku, gpt-4, gemini-pro, etc.
+  color: purple
+  temperature: 0.7
+  max_tokens: 4096
+
+# Tools available to the agent
+tools:
+  - Read
+  - Write
+  - Glob
+  - Grep
+  - Skill
+  - Task
+  - Bash
+
+# MCP tools (if available)
+mcp_tools:
+  - mcp__perplexity__search
+  - mcp__perplexity__reason
+  - mcp__microsoft-learn__microsoft_docs_fetch
+  - mcp__microsoft-learn__microsoft_code_sample_search
+
+# API Configuration
+api:
+  # API key can be set here or via environment variable
+  # Set GEMINI_API_KEY or OPENAI_API_KEY environment variable
+  key: null
+  base_url: null
+  timeout: 120
+
+# Skills Configuration
+skills:
+  # Base path for skills (relative to this config file)
+  base_path: ../../
+
+  # Auto-load these skills on startup
+  auto_load:
+    - risk-assessment
+    - ai-governance
+    - ai-safety-planning
+
+  # Skill categories
+  categories:
+    ai_act_package:
+      - ai-ethics
+      - ai-ethics-advisor
+      - ai-governance
+      - ai-performance-testing
+      - ai-safety-planning
+      - ai-testing
+      - automatic-logging
+      - deployer-training
+      - downstream-notifier
+      - fact-checker
+      - incident-responder
+      - multilingual-localization
+      - risk-assessment
+      - standards-compliance-interoperability
+      - transparency-instructions
+      - validating-ai-ethics-and-fairness
+
+    ai_ml_planning:
+      - agentic-workflow-design
+      - bias-assessment
+      - explainability-planning
+      - hitl-design
+      - ml-project-lifecycle
+      - model-selection
+      - prompt-engineering
+      - rag-architecture
+      - token-budgeting
+
+    compliance_planning:
+      - data-classification
+      - ethics-review
+      - gdpr-compliance
+      - hipaa-compliance
+      - license-compliance
+      - pci-dss-compliance
+      - sbom-management
+      - security-frameworks
+
+    google_ecosystem:
+      - gemini-checkpoint-management
+      - gemini-cli-docs
+      - gemini-cli-execution
+      - gemini-command-development
+      - gemini-config-management
+      - gemini-context-bridge
+      - gemini-delegation-patterns
+      - gemini-exploration-patterns
+      - gemini-extension-development
+      - gemini-json-parsing
+      - gemini-mcp-integration
+      - gemini-memory-sync
+      - gemini-sandbox-configuration
+      - gemini-session-management
+      - gemini-token-optimization
+      - gemini-workspace-bridge
+      - policy-engine-builder
+      - toml-command-builder
+
+# Risk Classification Keywords
+risk_classification:
+  high_risk:
+    - healthcare
+    - medical
+    - diagnosis
+    - credit
+    - scoring
+    - employment
+    - hiring
+    - recruitment
+    - biometric
+    - law enforcement
+    - critical infrastructure
+    - education
+
+  limited_risk:
+    - chatbot
+    - customer service
+    - content generation
+    - emotion recognition
+
+  unacceptable:
+    - social scoring
+    - subliminal manipulation
+    - real-time biometric identification
+
+# Compliance Frameworks
+compliance:
+  frameworks:
+    - name: EU AI Act
+      always_applicable: true
+    - name: GDPR
+      keywords:
+        - personal data
+        - user data
+        - privacy
+        - eu
+    - name: HIPAA
+      keywords:
+        - healthcare
+        - medical
+        - patient
+        - health
+    - name: PCI-DSS
+      keywords:
+        - payment
+        - credit card
+        - transaction
+
+# Logging Configuration
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: governance_agent.log
+
+# Output Configuration
+output:
+  default_format: json  # json, yaml, markdown
+  export_directory: ./exports
+  timestamp_format: "%Y%m%d_%H%M%S"

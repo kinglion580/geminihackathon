@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Risk Assessment Questionnaire | EU AI Act Compliance</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --success: #16a34a;
+            --info: #0891b2;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg) 0%, #1a1a2e 100%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .progress-container {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--surface-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #a78bfa);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .question-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid var(--surface-light);
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), #a78bfa);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: var(--surface-light);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.2);
+        }
+
+        .option.prohibited {
+            border-color: var(--danger);
+            background: rgba(220, 38, 38, 0.15);
+        }
+
+        .option-radio {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--text-muted);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-radio {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .option.selected .option-radio::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .option-badge {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .badge-prohibited {
+            background: rgba(220, 38, 38, 0.2);
+            color: #fca5a5;
+        }
+
+        .badge-high {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fcd34d;
+        }
+
+        .badge-limited {
+            background: rgba(8, 145, 178, 0.2);
+            color: #67e8f9;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Results Section */
+        .results-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid var(--surface-light);
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .results-card.active {
+            display: block;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .risk-unacceptable { color: var(--danger); }
+        .risk-high { color: var(--warning); }
+        .risk-limited { color: var(--info); }
+        .risk-minimal { color: var(--success); }
+
+        .result-summary {
+            background: var(--surface-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .requirements-list {
+            list-style: none;
+        }
+
+        .requirements-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--surface-light);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .requirements-list li:last-child {
+            border-bottom: none;
+        }
+
+        .req-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .actions-section {
+            margin-top: 30px;
+        }
+
+        .actions-section h3 {
+            margin-bottom: 15px;
+            color: var(--text-muted);
+        }
+
+        .action-item {
+            background: var(--surface-light);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .action-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .download-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 16px 32px;
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .start-screen h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .start-screen p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-item {
+            background: var(--surface-light);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-item h4 {
+            margin-bottom: 5px;
+        }
+
+        .feature-item p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .question-text { font-size: 1.1rem; }
+            .container { padding: 20px 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ AI Risk Assessment</h1>
+            <p class="subtitle">EU AI Act Compliance Questionnaire</p>
+        </header>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="question-card active">
+            <div class="start-screen">
+                <h2>Assess Your AI System's Risk Level</h2>
+                <p>This interactive questionnaire will guide you through the EU AI Act risk classification framework to determine your AI system's regulatory requirements.</p>
+                
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">🎯</div>
+                        <h4>Risk Classification</h4>
+                        <p>Determine if your AI is prohibited, high-risk, limited, or minimal risk</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📋</div>
+                        <h4>Requirements</h4>
+                        <p>Get a list of compliance requirements for your risk level</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✅</div>
+                        <h4>Action Items</h4>
+                        <p>Receive specific compliance actions to implement</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="startAssessment()">
+                    Start Assessment →
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="progress-text">
+                <span id="progressLabel">Question 1 of 10</span>
+                <span id="progressPercent">0%</span>
+            </div>
+        </div>
+
+        <!-- Questions Container -->
+        <div id="questionsContainer"></div>
+
+        <!-- Results Card -->
+        <div class="results-card" id="resultsCard">
+            <div class="result-header">
+                <div class="result-icon" id="resultIcon">🔴</div>
+                <h2 class="result-title" id="resultTitle">Risk Classification</h2>
+                <p class="result-level" id="resultLevel"></p>
+            </div>
+
+            <div class="result-summary" id="resultSummary">
+                <p id="resultDescription"></p>
+            </div>
+
+            <h3>Compliance Requirements:</h3>
+            <ul class="requirements-list" id="requirementsList"></ul>
+
+            <div class="actions-section">
+                <h3>Recommended Actions:</h3>
+                <div id="actionsList"></div>
+            </div>
+
+            <div class="download-section">
+                <button class="btn btn-download" onclick="downloadReport()">
+                    📥 Download Assessment Report (PDF)
+                </button>
+                <br><br>
+                <button class="btn btn-secondary" onclick="restartAssessment()">
+                    🔄 Start New Assessment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Questions data based on SKILL.md logic
+        const questions = [
+            {
+                id: 'useCase',
+                text: 'What is the primary use case of your AI system?',
+                options: [
+                    { value: 'social_scoring', label: 'Social Scoring (evaluating individuals based on social behavior)', risk: 'prohibited' },
+                    { value: 'subliminal', label: 'Subliminal Manipulation (techniques beyond user awareness)', risk: 'prohibited' },
+                    { value: 'vulnerability', label: 'Vulnerability Exploitation (targeting vulnerable groups)', risk: 'prohibited' },
+                    { value: 'facial_scraping', label: 'Facial Recognition Scraping from internet/CCTV', risk: 'prohibited' },
+                    { value: 'predictive_policing', label: 'Predictive Policing (individual crime prediction)', risk: 'high' },
+                    { value: 'emotion_recognition', label: 'Emotion Recognition', risk: 'context' },
+                    { value: 'biometric', label: 'Biometric Identification', risk: 'high' },
+                    { value: 'credit_scoring', label: 'Credit Scoring / Creditworthiness', risk: 'high' },
+                    { value: 'recruitment', label: 'Recruitment / HR Screening', risk: 'high' },
+                    { value: 'chatbot', label: 'Chatbot / Conversational AI', risk: 'limited' },
+                    { value: 'content_gen', label: 'Content Generation (text, image, audio)', risk: 'limited' },
+                    { value: 'recommendation', label: 'Recommendation System', risk: 'minimal' },
+                    { value: 'spam_filter', label: 'Spam Filter / Game AI', risk: 'minimal' },
+                    { value: 'other', label: 'Other general purpose AI', risk: 'minimal' }
+                ]
+            },
+            {
+                id: 'deployedBy',
+                text: 'Who is deploying this AI system?',
+                options: [
+                    { value: 'public_authority', label: 'Public Authority (government, public institution)', flag: 'public' },
+                    { value: 'private', label: 'Private Sector Organization', flag: 'private' },
+                    { value: 'other_org', label: 'Other Organization', flag: 'private' }
+                ]
+            },
+            {
+                id: 'context',
+                text: 'In what context will this AI system be deployed?',
+                options: [
+                    { value: 'workplace', label: 'Workplace (employee-facing)', flag: 'workplace' },
+                    { value: 'education', label: 'Educational Institution', flag: 'education' },
+                    { value: 'healthcare', label: 'Healthcare Setting', flag: 'healthcare' },
+                    { value: 'law_enforcement', label: 'Law Enforcement', flag: 'law_enforcement' },
+                    { value: 'consumer', label: 'General / Consumer-facing', flag: 'consumer' }
+                ]
+            },
+            {
+                id: 'category',
+                text: 'What category does your AI system fall under?',
+                options: [
+                    { value: 'biometrics', label: 'Biometrics (identification, categorization, emotion)', risk: 'high' },
+                    { value: 'critical_infra', label: 'Critical Infrastructure (transport, utilities, digital)', risk: 'high' },
+                    { value: 'education_cat', label: 'Education (access decisions, exam evaluation)', risk: 'high' },
+                    { value: 'employment', label: 'Employment (recruitment, performance, promotion)', risk: 'high' },
+                    { value: 'essential_services', label: 'Essential Services (credit, insurance, emergency)', risk: 'high' },
+                    { value: 'law_enforcement_cat', label: 'Law Enforcement (risk assessment, evidence, profiling)', risk: 'high' },
+                    { value: 'migration', label: 'Migration/Asylum (border control, visa processing)', risk: 'high' },
+                    { value: 'justice', label: 'Justice/Democracy (judicial assistance, elections)', risk: 'high' },
+                    { value: 'general', label: 'General Purpose (no specific high-risk category)', risk: 'minimal' }
+                ]
+            },
+            {
+                id: 'emotion_purpose',
+                text: 'If using emotion recognition in workplace/education, is it for medical or safety purposes?',
+                condition: (answers) => answers.useCase === 'emotion_recognition' && 
+                    (answers.context === 'workplace' || answers.context === 'education'),
+                options: [
+                    { value: 'medical_safety', label: 'Yes, for medical or safety purposes', risk: 'limited' },
+                    { value: 'other_purpose', label: 'No, for other purposes', risk: 'prohibited' },
+                    { value: 'not_applicable', label: 'Not applicable', risk: 'continue' }
+                ]
+            },
+            {
+                id: 'profiling_only',
+                text: 'Does your predictive policing system base predictions SOLELY on profiling or personality traits?',
+                condition: (answers) => answers.useCase === 'predictive_policing',
+                options: [
+                    { value: 'yes_solely', label: 'Yes, based solely on profiling/traits', risk: 'prohibited' },
+                    { value: 'no_other_factors', label: 'No, uses other factors as well', risk: 'high' }
+                ]
+            },
+            {
+                id: 'transparency',
+                text: 'Does your AI system involve interactions where users might not know they are interacting with AI?',
+                options: [
+                    { value: 'yes_undisclosed', label: 'Yes, AI nature may not be clear to users', risk: 'limited' },
+                    { value: 'no_clear', label: 'No, AI nature is clearly disclosed', risk: 'continue' }
+                ]
+            },
+            {
+                id: 'synthetic_content',
+                text: 'Does your AI generate synthetic content (deepfakes, AI-generated images/video/audio)?',
+                options: [
+                    { value: 'yes_synthetic', label: 'Yes, it generates synthetic/deepfake content', risk: 'limited' },
+                    { value: 'no_synthetic', label: 'No synthetic content generation', risk: 'continue' }
+                ]
+            },
+            {
+                id: 'human_oversight',
+                text: 'Does your system design include human oversight mechanisms?',
+                options: [
+                    { value: 'full_oversight', label: 'Yes, comprehensive human-in-the-loop design', compliance: 'good' },
+                    { value: 'partial_oversight', label: 'Partial oversight mechanisms in place', compliance: 'partial' },
+                    { value: 'no_oversight', label: 'No human oversight currently designed', compliance: 'gap' }
+                ]
+            },
+            {
+                id: 'documentation',
+                text: 'Do you have technical documentation for your AI system?',
+                options: [
+                    { value: 'full_docs', label: 'Yes, comprehensive technical documentation', compliance: 'good' },
+                    { value: 'partial_docs', label: 'Partial documentation exists', compliance: 'partial' },
+                    { value: 'no_docs', label: 'No formal documentation', compliance: 'gap' }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = {};
+        let visibleQuestions = [];
+
+        function startAssessment() {
+            document.getElementById('startScreen').classList.remove('active');
+            document.getElementById('progressContainer').style.display = 'block';
+            calculateVisibleQuestions();
+            renderQuestion();
+        }
+
+        function calculateVisibleQuestions() {
+            visibleQuestions = questions.filter(q => {
+                if (!q.condition) return true;
+                return q.condition(answers);
+            });
+        }
+
+        function renderQuestion() {
+            calculateVisibleQuestions();
+            const container = document.getElementById('questionsContainer');
+            
+            if (currentQuestion >= visibleQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const q = visibleQuestions[currentQuestion];
+            updateProgress();
+
+            container.innerHTML = `
+                <div class="question-card active">
+                    <span class="question-number">Question ${currentQuestion + 1}</span>
+                    <h2 class="question-text">${q.text}</h2>
+                    <div class="options">
+                        ${q.options.map((opt, idx) => `
+                            <div class="option ${answers[q.id] === opt.value ? 'selected' : ''} ${opt.risk === 'prohibited' ? 'prohibited' : ''}" 
+                                 onclick="selectOption('${q.id}', '${opt.value}', this)">
+                                <div class="option-radio"></div>
+                                <span class="option-text">${opt.label}</span>
+                                ${opt.risk === 'prohibited' ? '<span class="option-badge badge-prohibited">⚠️ PROHIBITED</span>' : ''}
+                                ${opt.risk === 'high' ? '<span class="option-badge badge-high">High Risk</span>' : ''}
+                                ${opt.risk === 'limited' ? '<span class="option-badge badge-limited">Limited Risk</span>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="navigation">
+                        <button class="btn btn-secondary" onclick="prevQuestion()" ${currentQuestion === 0 ? 'disabled' : ''}>
+                            ← Previous
+                        </button>
+                        <button class="btn btn-primary" onclick="nextQuestion()" id="nextBtn" ${!answers[q.id] ? 'disabled' : ''}>
+                            ${currentQuestion === visibleQuestions.length - 1 ? 'View Results' : 'Next'} →
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectOption(questionId, value, element) {
+            answers[questionId] = value;
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / visibleQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            document.getElementById('progressLabel').textContent = `Question ${currentQuestion + 1} of ${visibleQuestions.length}`;
+            document.getElementById('progressPercent').textContent = `${Math.round(progress)}%`;
+        }
+
+        function calculateRiskLevel() {
+            // Check for prohibited practices first
+            const prohibitedUseCases = ['social_scoring', 'subliminal', 'vulnerability', 'facial_scraping'];
+            if (prohibitedUseCases.includes(answers.useCase)) {
+                if (answers.useCase === 'social_scoring' && answers.deployedBy === 'public_authority') {
+                    return 'unacceptable';
+                }
+                if (['subliminal', 'vulnerability', 'facial_scraping'].includes(answers.useCase)) {
+                    return 'unacceptable';
+                }
+            }
+
+            // Check emotion recognition in workplace/education
+            if (answers.emotion_purpose === 'other_purpose') {
+                return 'unacceptable';
+            }
+
+            // Check predictive policing
+            if (answers.profiling_only === 'yes_solely') {
+                return 'unacceptable';
+            }
+
+            // Check high-risk categories
+            const highRiskCategories = ['biometrics', 'critical_infra', 'education_cat', 'employment', 
+                                        'essential_services', 'law_enforcement_cat', 'migration', 'justice'];
+            if (highRiskCategories.includes(answers.category)) {
+                return 'high';
+            }
+
+            const highRiskUseCases = ['biometric', 'credit_scoring', 'recruitment', 'predictive_policing'];
+            if (highRiskUseCases.includes(answers.useCase)) {
+                return 'high';
+            }
+
+            // Check limited risk
+            if (answers.transparency === 'yes_undisclosed' || 
+                answers.synthetic_content === 'yes_synthetic' ||
+                ['chatbot', 'content_gen'].includes(answers.useCase)) {
+                return 'limited';
+            }
+
+            return 'minimal';
+        }
+
+        function showResults() {
+            document.getElementById('questionsContainer').innerHTML = '';
+            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('resultsCard').classList.add('active');
+
+            const riskLevel = calculateRiskLevel();
+            
+            const riskData = {
+                unacceptable: {
+                    icon: '🚫',
+                    title: 'UNACCEPTABLE RISK',
+                    color: 'risk-unacceptable',
+                    description: 'Your AI system falls under EU AI Act prohibited practices. This system CANNOT be deployed in the EU.',
+                    requirements: [
+                        'System must NOT be deployed or placed on the market',
+                        'Discontinue development for EU deployment',
+                        'Review for alternative approaches that comply with regulations',
+                        'Consult legal counsel for compliance alternatives'
+                    ],
+                    actions: [
+                        'Immediately halt deployment plans',
+                        'Document the assessment decision',
+                        'Explore compliant alternative approaches',
+                        'Engage with legal and compliance teams'
+                    ]
+                },
+                high: {
+                    icon: '⚠️',
+                    title: 'HIGH RISK',
+                    color: 'risk-high',
+                    description: 'Your AI system is classified as high-risk under EU AI Act Annex III. Strict compliance requirements apply.',
+                    requirements: [
+                        'Implement comprehensive risk management system (Article 9)',
+                        'Ensure data governance and quality management (Article 10)',
+                        'Create technical documentation per Annex IV (Article 11)',
+                        'Implement automatic logging and record-keeping (Article 12)',
+                        'Provide transparency and instructions for use (Article 13)',
+                        'Design for human oversight (Article 14)',
+                        'Ensure accuracy, robustness, and cybersecurity (Article 15)',
+                        'Conduct conformity assessment before deployment'
+                    ],
+                    actions: [
+                        'Establish a risk management system',
+                        'Document training data governance',
+                        'Create Annex IV technical documentation',
+                        'Implement automatic logging',
+                        'Design human oversight mechanisms',
+                        'Register in EU AI database (if applicable)',
+                        'Conduct fundamental rights impact assessment',
+                        'Prepare EU declaration of conformity'
+                    ]
+                },
+                limited: {
+                    icon: 'ℹ️',
+                    title: 'LIMITED RISK',
+                    color: 'risk-limited',
+                    description: 'Your AI system has transparency obligations under the EU AI Act. Users must be informed about AI interaction.',
+                    requirements: [
+                        'Disclose AI interaction to users',
+                        'Label AI-generated content where applicable',
+                        'Inform users about emotion recognition or biometric categorization',
+                        'Ensure transparency mechanisms are in place'
+                    ],
+                    actions: [
+                        'Implement disclosure mechanisms in user interfaces',
+                        'Add AI interaction labels/notices',
+                        'Update terms of service and privacy policies',
+                        'Document transparency measures'
+                    ]
+                },
+                minimal: {
+                    icon: '✅',
+                    title: 'MINIMAL RISK',
+                    color: 'risk-minimal',
+                    description: 'Your AI system falls under minimal/no risk category. No mandatory requirements, but voluntary codes of conduct are encouraged.',
+                    requirements: [
+                        'Consider voluntary codes of conduct',
+                        'Follow responsible AI best practices',
+                        'Monitor for regulatory changes',
+                        'Document risk assessment decision'
+                    ],
+                    actions: [
+                        'Document your risk assessment',
+                        'Consider implementing voluntary AI ethics guidelines',
+                        'Stay informed about regulatory developments',
+                        'Review classification periodically'
+                    ]
+                }
+            };
+
+            const data = riskData[riskLevel];
+            
+            document.getElementById('resultIcon').textContent = data.icon;
+            document.getElementById('resultTitle').textContent = data.title;
+            document.getElementById('resultTitle').className = `result-title ${data.color}`;
+            document.getElementById('resultDescription').textContent = data.description;
+
+            const reqList = document.getElementById('requirementsList');
+            reqList.innerHTML = data.requirements.map(req => `
+                <li>
+                    <span class="req-icon">📋</span>
+                    <span>${req}</span>
+                </li>
+            `).join('');
+
+            const actionsList = document.getElementById('actionsList');
+            actionsList.innerHTML = data.actions.map(action => `
+                <div class="action-item">
+                    <input type="checkbox" class="action-checkbox">
+                    <span>${action}</span>
+                </div>
+            `).join('');
+        }
+
+        function restartAssessment() {
+            currentQuestion = 0;
+            answers = {};
+            document.getElementById('resultsCard').classList.remove('active');
+            document.getElementById('startScreen').classList.add('active');
+        }
+
+        function downloadReport() {
+            const riskLevel = calculateRiskLevel();
+            const timestamp = new Date().toISOString().split('T')[0];
+            
+            let reportContent = `
+AI RISK ASSESSMENT REPORT
+========================
+Generated: ${new Date().toLocaleString()}
+
+RISK CLASSIFICATION: ${riskLevel.toUpperCase()}
+
+ANSWERS PROVIDED:
+${Object.entries(answers).map(([key, value]) => `- ${key}: ${value}`).join('\n')}
+
+This assessment was conducted using the EU AI Act compliance framework.
+For official compliance guidance, consult with legal and regulatory experts.
+            `;
+
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `AI_Risk_Assessment_${timestamp}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

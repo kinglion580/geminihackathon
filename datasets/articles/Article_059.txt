@@ -1,0 +1,37 @@
+Article 59
+
+Further processing of personal data for developing certain AI systems in the public interest in the AI regulatory sandbox
+
+1.   In the AI regulatory sandbox, personal data lawfully collected for other purposes may be processed solely for the purpose of developing, training and testing certain AI systems in the sandbox when all of the following conditions are met:
+
+(a)
+
+AI systems shall be developed for safeguarding substantial public interest by a public authority or another natural or legal person and in one or more of the following areas:
+
+(i)
+
+public safety and public health, including disease detection, diagnosis prevention, control and treatment and improvement of health care systems;
+
+(ii)
+
+a high level of protection and improvement of the quality of the environment, protection of biodiversity, protection against pollution, green transition measures, climate change mitigation and adaptation measures;
+
+(iii)
+
+energy sustainability;
+
+(iv)
+
+safety and resilience of transport systems and mobility, critical infrastructure and networks;
+
+(v)
+
+efficiency and quality of public administration and public services;
+
+(b)
+
+the data processed are necessary for complying with one or more of the requirements referred to in Chapter III, Section 2 where those requirements cannot effectively be fulfilled by processing anonymised, synthetic or other non-personal data;
+
+(c)
+
+there are effective monitoring mechanisms to identify if any high risks to the rights and freedoms of the data subjects, as referred to in

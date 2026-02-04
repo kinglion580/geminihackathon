@@ -76,14 +76,25 @@ class GovernanceAIAgent:
         # Try to load API keys from environment
         config.api_key = os.getenv("GEMINI_API_KEY") or os.getenv("OPENAI_API_KEY")
 
-        # From implementation/ go up 4 levels to repository root
-        repo_root = Path(__file__).parent.parent.parent.parent.parent
+        # All skills are now consolidated in the /skills folder at repository root
+        # Path: implementation/ -> agents/ -> agents/ -> geminihackathon/
+        # So we need to go up 4 levels from __file__ to reach geminihackathon/
+        repo_root = Path(__file__).parent.parent.parent.parent
+        skills_dir = repo_root / "skills"
 
-        # PRIMARY: Root-level consolidated skills folder (skills/)
-        root_skills_dir = repo_root / "skills"
-        if root_skills_dir.exists():
-            config.skills_base_path = str(root_skills_dir)
-            config.skills_paths.append(str(root_skills_dir))
+        if skills_dir.exists():
+            config.skills_base_path = str(skills_dir)
+            config.skills_paths.append(str(skills_dir))
+        else:
+            # Fallback: try to find skills folder by searching upward
+            current = Path(__file__).parent
+            for _ in range(6):
+                candidate = current / "skills"
+                if candidate.exists() and (candidate / "ai-ethics").exists():
+                    config.skills_base_path = str(candidate)
+                    config.skills_paths.append(str(candidate))
+                    break
+                current = current.parent
 
         return config
 
@@ -617,7 +628,14 @@ How can I assist you today?"""
             raise ValueError(f"Unsupported format: {format}")
 
     def _format_as_markdown(self, data: Dict[str, Any], level: int = 1) -> str:
-        """Format dictionary as markdown"""
+        """Format dictionary as professional markdown report"""
+        from datetime import datetime
+
+        # Check if this is an assessment or plan (top level)
+        if level == 1:
+            return self._format_professional_report(data)
+
+        # For nested data, use simple formatting
         md = ""
         for key, value in data.items():
             heading = "#" * level
@@ -636,6 +654,601 @@ How can I assist you today?"""
             else:
                 md += f"{value}\n\n"
 
+        return md
+
+    def _format_professional_report(self, data: Dict[str, Any]) -> str:
+        """Format as professional governance report matching Output/*.md style"""
+        from datetime import datetime
+
+        # Determine report type
+        is_assessment = 'system_description' in data
+        is_plan = 'system_profile' in data and 'executive_summary' in data
+
+        if is_assessment:
+            return self._format_assessment_report(data)
+        elif is_plan:
+            return self._format_governance_plan_report(data)
+        else:
+            # Generic format
+            return self._format_generic_report(data)
+
+    def _format_assessment_report(self, data: Dict[str, Any]) -> str:
+        """Format assessment as comprehensive professional report"""
+        from datetime import datetime
+
+        risk = data.get('risk_classification', {})
+        risk_category = risk.get('category', 'Unknown')
+        risk_emoji = '🔴' if risk_category == 'High-Risk' else '🟡' if risk_category == 'Limited Risk' else '🟢'
+
+        # Calculate internal risk score
+        risk_score = 4 if risk_category == 'High-Risk' else 2 if risk_category == 'Limited Risk' else 1
+
+        md = f"""# 🛡️ AI Safety & Risk Assessment Report
+
+**Target System**: {data.get('system_description', 'AI System')}
+**Generated**: {datetime.now().strftime('%Y-%m-%d')}
+**Framework**: EU AI Act + NIST AI RMF
+**Skill Applied**: ai-safety-planning, risk-assessment
+**Assessor**: Governance AI Agent
+
+---
+
+## 1. Risk Classification
+
+### EU AI Act Category: **{risk_category}**
+
+- **Applicable Article:** {"Annex III (High-Risk)" if risk_category == 'High-Risk' else "Article 50 (Transparency Obligations)" if risk_category == 'Limited Risk' else "Article 6 (Minimal Risk)"}
+- **Justification:** {risk.get('reasoning', 'N/A')}
+- **Classification Date:** {datetime.now().strftime('%Y-%m-%d')}
+
+### NIST AI RMF Profile
+
+- **Primary Function:** AI system requiring governance assessment
+- **AI Type:** To be determined based on implementation
+- **Deployment:** To be specified
+
+### Internal Risk Score: **{risk_score}/5** ({"High" if risk_score >= 4 else "Medium" if risk_score >= 2 else "Low"})
+
+| Factor | Assessment | Score |
+|--------|------------|-------|
+| Autonomy Level | {"High autonomy - critical decisions" if risk_category == 'High-Risk' else "Medium autonomy - user-initiated" if risk_category == 'Limited Risk' else "Low autonomy - informational"} | {risk_score}/5 |
+| Decision Impact | {"High impact on individuals" if risk_category == 'High-Risk' else "Medium impact - requires transparency" if risk_category == 'Limited Risk' else "Low impact - informational only"} | {risk_score}/5 |
+| Data Sensitivity | {"Sensitive personal data" if risk_category == 'High-Risk' else "Standard personal data" if risk_category == 'Limited Risk' else "Non-sensitive data"} | {risk_score}/5 |
+| User Vulnerability | {"Vulnerable populations" if risk_category == 'High-Risk' else "General public" if risk_category == 'Limited Risk' else "Technical users"} | {max(1, risk_score-1)}/5 |
+| Reversibility | {"Difficult to reverse" if risk_category == 'High-Risk' else "Partially reversible" if risk_category == 'Limited Risk' else "Fully reversible"} | {max(1, risk_score-1)}/5 |
+
+---
+
+## 2. Identified Risks
+
+| Risk ID | Risk Description | Likelihood | Impact | Severity | Mitigation |
+|---------|------------------|------------|--------|----------|------------|
+| R-001 | **Hallucination/Misinformation** - AI may generate incorrect information | Medium | {"High" if risk_category == 'High-Risk' else "Medium"} | {"High" if risk_category == 'High-Risk' else "Medium"} | System prompt constraints, source citations |
+| R-002 | **Over-reliance on AI** - Users may treat responses as authoritative | Medium | {"High" if risk_category == 'High-Risk' else "Medium"} | {"High" if risk_category == 'High-Risk' else "Medium"} | Prominent disclaimers, human oversight |
+| R-003 | **Prompt Injection** - Malicious inputs to manipulate responses | {"Medium" if risk_category == 'High-Risk' else "Low"} | Medium | Medium | Input validation required |
+| R-004 | **Data Privacy** - Potential exposure of sensitive information | {"High" if risk_category == 'High-Risk' else "Low"} | {"High" if risk_category == 'High-Risk' else "Medium"} | {"High" if risk_category == 'High-Risk' else "Medium"} | Data minimization, encryption |
+| R-005 | **Bias/Discrimination** - Unfair treatment of user groups | {"Medium" if risk_category == 'High-Risk' else "Low"} | {"High" if risk_category == 'High-Risk' else "Medium"} | {"High" if risk_category == 'High-Risk' else "Medium"} | Bias testing required |
+| R-006 | **System Availability** - Service disruption | Low | Medium | Low | Redundancy, monitoring |
+
+---
+
+## 3. Current Safety Controls (To Be Implemented)
+
+### Transparency (Article 50 Compliance)
+
+- [ ] **AI Disclosure Notice** - Inform users they are interacting with AI
+- [ ] **Model Identification** - Display AI system name and version
+- [ ] **Disclaimer Notices** - Clear limitations and intended use
+- [ ] **AI-Generated Content Label** - Mark all AI outputs
+
+### System Prompt Safety
+
+- [ ] **Context Constraints** - Limit AI to authorized topics
+- [ ] **Citation Requirements** - Require source references
+- [ ] **Guardrail Instructions** - Safety boundaries in prompts
+- [ ] **Temperature Control** - Deterministic output settings
+
+### User Experience
+
+- [ ] **Clear Exit Options** - User control over interactions
+- [ ] **Conversation History** - Ability to clear/export history
+- [ ] **Error Handling** - Graceful failure with user feedback
+- [ ] **Feedback Mechanism** - User reporting capability
+
+---
+
+## 4. Missing Safety Controls (❌ Not Implemented)
+
+### Input Guards
+
+- [ ] **Prompt Injection Detection** - Filter for injection attempts
+- [ ] **Input Validation** - Length limits and content validation
+- [ ] **Rate Limiting** - Protection against abuse
+
+### Output Filters
+
+- [ ] **Toxicity Filtering** - Post-processing safety checks
+- [ ] **PII Detection** - Check for accidental PII in responses
+- [ ] **Confidence Scoring** - Indication of response confidence
+
+### Monitoring & Logging
+
+- [ ] **Query Logging** - Audit trail of user queries
+- [ ] **Response Logging** - Storage of AI responses
+- [ ] **Error Tracking** - Centralized error logging
+- [ ] **Usage Analytics** - Metrics collection
+
+### Security
+
+- [ ] **API Key Management** - Secure key storage and rotation
+- [ ] **Input Sanitization** - Clean user inputs before processing
+- [ ] **Session Management** - Timeout and access controls
+
+---
+
+## 5. Guardrails Recommendations
+
+### 5.1 Input Guards (Priority: High)
+
+```python
+# Recommended: Add PromptInjectionGuard
+INJECTION_INDICATORS = [
+    "ignore previous instructions",
+    "disregard your training",
+    "you are now",
+    "pretend you are",
+    "system prompt:",
+    "new instructions:",
+]
+
+def validate_input(user_input: str) -> tuple[bool, str]:
+    \"\"\"Validate user input for potential attacks.\"\"\"
+    normalized = user_input.lower()
+
+    # Check for injection attempts
+    for indicator in INJECTION_INDICATORS:
+        if indicator in normalized:
+            return False, "Input blocked: Potential prompt injection detected"
+
+    # Length limit
+    if len(user_input) > 10000:
+        return False, "Input too long (max 10,000 characters)"
+
+    return True, ""
+```
+
+### 5.2 Output Filters (Priority: Medium)
+
+```python
+# Recommended: Add response validation
+import re
+
+def validate_response(response_text: str) -> str:
+    \"\"\"Post-process response for safety.\"\"\"
+    # Check for potential PII patterns
+    pii_patterns = [
+        r'\\b\\d{{3}}-\\d{{2}}-\\d{{4}}\\b',  # SSN
+        r'\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{{2,}}\\b',  # Email
+    ]
+
+    for pattern in pii_patterns:
+        if re.search(pattern, response_text):
+            # Log warning
+            pass
+
+    return response_text
+```
+
+### 5.3 Logging Implementation (Priority: Medium)
+
+```python
+# Recommended: Add audit logging
+import logging
+from datetime import datetime
+
+def setup_logging():
+    logging.basicConfig(
+        filename=f'ai_system_{{datetime.now():%Y%m%d}}.log',
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
+
+def log_interaction(query: str, response: str, latency: float):
+    logging.info(f"Query: {{query[:100]}}... | Response length: {{len(response)}} | Latency: {{latency:.2f}}s")
+```
+
+---
+
+## 6. Testing Plan
+
+### Pre-Launch Red Teaming
+
+- [ ] Direct injection attempts ("ignore previous instructions...")
+- [ ] Indirect injection via user content
+- [ ] Multi-turn manipulation attempts
+- [ ] Jailbreak scenarios ("pretend you are a different AI...")
+
+### Bias Testing
+
+- [ ] Test responses across different user demographics
+- [ ] Check for consistent quality across topics
+- [ ] Verify balanced treatment of sensitive subjects
+
+### Continuous Testing
+
+- [ ] Monthly review of flagged interactions
+- [ ] Quarterly security assessment
+- [ ] Annual compliance audit
+
+---
+
+## 7. Monitoring Plan
+
+### Safety Metrics Dashboard
+
+| Metric | Target | Current |
+|--------|--------|---------|
+| Response Accuracy | >95% with citations | Not measured |
+| Disclaimer Display Rate | 100% | Not measured |
+| Error Rate | <1% | Not measured |
+| Average Response Latency | <5s | Not measured |
+
+### Alerting Thresholds
+
+- **Critical:** API errors >5% in 1 hour
+- **High:** Response latency >10s sustained
+- **Medium:** Unusual query patterns detected
+
+---
+
+## 8. Compliance Status
+
+### EU AI Act Requirements
+
+| Requirement | Status | Implementation |
+|-------------|--------|----------------|
+| Inform users they are interacting with AI | 🔲 Pending | To be implemented |
+| Disclose AI-generated content | 🔲 Pending | To be implemented |
+| Provide information about AI capabilities | 🔲 Pending | To be documented |
+| Enable user to understand AI limitations | 🔲 Pending | To be documented |
+
+### Applicable Regulations
+
+"""
+        for reg in data.get('applicable_regulations', []):
+            status = '✅' if reg.get('applies', False) else '❌'
+            md += f"| **{reg.get('name', 'Unknown')}** | {status} Applicable | {reg.get('reason', 'N/A')} |\n"
+
+        md += f"""
+---
+
+## 9. Action Items
+
+### Immediate (Before Deployment)
+
+1. [ ] Implement AI disclosure notice (Article 50)
+2. [ ] Add input validation/prompt injection detection
+3. [ ] Implement basic query logging
+4. [ ] Add response latency monitoring
+
+### Short-term (Within 30 days)
+
+1. [ ] Implement rate limiting
+2. [ ] Add output safety filtering
+3. [ ] Create error tracking system
+4. [ ] Deploy monitoring dashboard
+
+### Medium-term (Within 90 days)
+
+1. [ ] Develop red teaming test suite
+2. [ ] Implement comprehensive logging
+3. [ ] Conduct bias testing
+4. [ ] Complete documentation
+
+---
+
+## 10. Recommended Skills to Load
+
+| Priority | Skill | Reason |
+|----------|-------|--------|
+"""
+        for i, rec in enumerate(data.get('recommended_skills', []), 1):
+            priority = 'P1' if i <= 3 else 'P2'
+            md += f"| {priority} | **{rec.get('skill', 'Unknown')}** | {rec.get('reason', 'N/A')} |\n"
+
+        md += f"""
+---
+
+## 11. Sign-off
+
+| Role | Name | Date | Signature |
+|------|------|------|-----------|
+| Safety Lead | | | |
+| Development Lead | | | |
+| Compliance Officer | | | |
+| Product Owner | | | |
+
+---
+
+*This assessment was generated using the Governance AI Agent*
+*Frameworks: EU AI Act (Regulation 2024/1689) + NIST AI RMF 1.0*
+*Assessment Date: {datetime.now().strftime('%Y-%m-%d')}*
+"""
+        return md
+
+    def _format_governance_plan_report(self, data: Dict[str, Any]) -> str:
+        """Format governance plan as professional report"""
+        from datetime import datetime
+
+        profile = data.get('system_profile', {})
+        risk = data.get('risk_assessment', {})
+        risk_category = risk.get('category', 'Unknown')
+        risk_emoji = '🔴' if risk_category == 'High-Risk' else '🟡' if risk_category == 'Limited Risk' else '🟢'
+
+        md = f"""# 📋 AI Governance Plan
+
+**System**: {profile.get('purpose', 'AI System')}
+**Type**: {profile.get('type', 'Not specified')}
+**Assessment Date**: {datetime.now().strftime('%Y-%m-%d')}
+**Framework**: EU AI Act + NIST AI RMF + ISO/IEC 42001
+**Generated By**: Governance AI Agent
+
+---
+
+## 📊 Executive Summary
+
+{data.get('executive_summary', 'No summary provided.')}
+
+**Overall Risk Level:** {risk_emoji} **{risk_category}**
+**Deployment Geography:** {profile.get('geography', 'Not specified')}
+**Target Users:** {profile.get('users', 'Not specified')}
+**Data Types:** {profile.get('data', 'Not specified')}
+
+---
+
+## 🔍 Risk Assessment
+
+### EU AI Act Classification
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                  RISK CLASSIFICATION                        │
+├────────────────────────────────────────────────────────────┤
+│  {risk_emoji} Risk Level: {risk_category.upper():45}│
+│  Confidence: {risk.get('confidence', 'medium').upper():47}│
+└────────────────────────────────────────────────────────────┘
+```
+
+**Reasoning:** {risk.get('reasoning', 'N/A')}
+
+---
+
+## ✅ Compliance Requirements
+
+| Regulation | Applies | Reason | Priority |
+|------------|---------|--------|----------|
+"""
+        for reg in data.get('compliance_requirements', []):
+            status = '✅' if reg.get('applies', False) else '❌'
+            md += f"| **{reg.get('name', 'Unknown')}** | {status} | {reg.get('reason', 'N/A')} | P1 |\n"
+
+        # Architecture recommendations
+        arch = data.get('architecture_recommendations', {})
+        md += """
+---
+
+## 🏗️ Architecture Recommendations
+
+### Recommended Patterns
+
+| Pattern | Description |
+|---------|-------------|
+"""
+        for pattern in arch.get('recommended_patterns', []):
+            md += f"| ✅ | {pattern} |\n"
+
+        md += """
+### Data Pipeline Requirements
+
+| Requirement | Status |
+|-------------|--------|
+"""
+        for req in arch.get('data_pipeline', []):
+            md += f"| {req} | 🔲 Pending |\n"
+
+        md += """
+### Monitoring Requirements
+
+| Requirement | Status |
+|-------------|--------|
+"""
+        for req in arch.get('monitoring', []):
+            md += f"| {req} | 🔲 Pending |\n"
+
+        # Safety implementation
+        safety = data.get('safety_implementation', {})
+        guardrails = safety.get('guardrails', {})
+
+        md += """
+---
+
+## 🛡️ Safety Implementation
+
+### Input Guards
+
+| Guard | Status | Priority |
+|-------|--------|----------|
+"""
+        for guard in guardrails.get('input_guards', []):
+            md += f"| {guard} | 🔲 Pending | P1 |\n"
+
+        md += """
+### Output Filters
+
+| Filter | Status | Priority |
+|--------|--------|----------|
+"""
+        for filter in guardrails.get('output_filters', []):
+            md += f"| {filter} | 🔲 Pending | P1 |\n"
+
+        md += """
+### Red Team Testing
+
+| Activity | Status |
+|----------|--------|
+"""
+        for activity in safety.get('red_teaming', []):
+            md += f"| {activity} | 🔲 Pending |\n"
+
+        # Testing strategy
+        testing = data.get('testing_strategy', {})
+        md += """
+---
+
+## 🧪 Testing Strategy
+
+### Pre-Launch Testing
+
+| Test Type | Status | Priority |
+|-----------|--------|----------|
+"""
+        for test in testing.get('pre_launch', []):
+            md += f"| {test} | 🔲 Pending | P1 |\n"
+
+        md += """
+### Continuous Testing
+
+| Test Type | Frequency |
+|-----------|-----------|
+"""
+        for test in testing.get('continuous', []):
+            md += f"| {test} | Ongoing |\n"
+
+        # Operational procedures
+        ops = data.get('operational_procedures', {})
+        md += """
+---
+
+## ⚙️ Operational Procedures
+
+### Logging Requirements
+
+| Category | Requirement |
+|----------|-------------|
+"""
+        logging = ops.get('logging', {})
+        for key, value in logging.items():
+            md += f"| **{key.replace('_', ' ').title()}** | {value} |\n"
+
+        md += """
+### Incident Response
+
+| Phase | Requirement |
+|-------|-------------|
+"""
+        incident = ops.get('incident_response', {})
+        for key, value in incident.items():
+            md += f"| **{key.replace('_', ' ').title()}** | {value} |\n"
+
+        # Next steps
+        md += """
+---
+
+## 📅 Implementation Roadmap
+
+"""
+        for step in data.get('next_steps', []):
+            phase = step.get('phase', 'Unknown')
+            md += f"### {phase}\n\n"
+            md += "| Task | Status |\n|------|--------|\n"
+            for task in step.get('tasks', []):
+                md += f"| {task} | 🔲 Pending |\n"
+            md += "\n"
+
+        md += f"""
+---
+
+## 📈 Compliance Checklist
+
+### EU AI Act Requirements
+
+| Requirement | Status | Notes |
+|-------------|--------|-------|
+| Risk Classification | ✅ Complete | {risk_category} |
+| Transparency Disclosure (Article 50) | 🔲 Pending | Implement user notification |
+| Technical Documentation | 🔲 Pending | Create system documentation |
+| Quality Management System | 🔲 Pending | {"Required for High-Risk" if risk_category == 'High-Risk' else "Recommended"} |
+| Human Oversight | 🔲 Pending | Design oversight mechanisms |
+| Logging & Traceability | 🔲 Pending | Implement audit logging |
+
+---
+
+## 🎯 Conclusion
+
+This governance plan provides a comprehensive framework for developing and deploying the **{profile.get('type', 'AI System')}** system.
+
+**Key Priorities:**
+1. Complete risk assessment and compliance mapping
+2. Implement safety guardrails before deployment
+3. Establish monitoring and incident response procedures
+4. Conduct pre-launch testing and validation
+
+**Risk Level:** {risk_emoji} {risk_category}
+**Recommendation:** {"Implement all mandatory requirements before deployment. Consider engaging compliance specialist." if risk_category == 'High-Risk' else "Follow standard development practices with transparency measures." if risk_category == 'Limited Risk' else "Proceed with standard development practices."}
+
+---
+
+*Plan generated by Governance AI Agent*
+*Frameworks: EU AI Act (2024/1689) + NIST AI RMF 1.0 + ISO/IEC 42001*
+"""
+        return md
+
+    def _format_generic_report(self, data: Dict[str, Any]) -> str:
+        """Format generic data as markdown report"""
+        from datetime import datetime
+
+        md = f"""# 📋 Governance Report
+
+**Generated**: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+**Framework**: EU AI Act + NIST AI RMF
+**Generated By**: Governance AI Agent
+
+---
+
+"""
+        # Use recursive formatting for generic data
+        for key, value in data.items():
+            md += f"## {key.replace('_', ' ').title()}\n\n"
+
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    if isinstance(v, list):
+                        md += f"### {k.replace('_', ' ').title()}\n\n"
+                        for item in v:
+                            if isinstance(item, dict):
+                                for ik, iv in item.items():
+                                    md += f"- **{ik}**: {iv}\n"
+                            else:
+                                md += f"- {item}\n"
+                        md += "\n"
+                    else:
+                        md += f"**{k.replace('_', ' ').title()}**: {v}\n\n"
+            elif isinstance(value, list):
+                for item in value:
+                    if isinstance(item, dict):
+                        for k, v in item.items():
+                            md += f"- **{k}**: {v}\n"
+                    else:
+                        md += f"- {item}\n"
+                md += "\n"
+            else:
+                md += f"{value}\n\n"
+
+        md += """
+---
+
+*Report generated by Governance AI Agent*
+"""
         return md
 
 

@@ -1,0 +1,5 @@
+Article 68. Independent experts appointed for this task shall meet the criteria outlined in Article 68(2).
+
+3.   For the purposes of paragraph 1, the Commission may request access to the general-purpose AI model concerned through APIs or further appropriate technical means and tools, including source code.
+
+4.   The request for access shall state the legal basis, the purpose and reasons of the request and set the period within which the access is to be provided, and the fines provided for in

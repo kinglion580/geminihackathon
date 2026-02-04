@@ -1,0 +1,11 @@
+Article 47;
+
+12.
+
+Electronic instructions for use; this information shall not be provided for high-risk AI systems in the areas of law enforcement or migration, asylum and border control management referred to in Annex III, points 1, 6 and 7;
+
+13.
+
+A URL for additional information (optional).
+
+Section B — Information to be submitted by providers of high-risk AI systems in accordance with

@@ -1,0 +1,15 @@
+Article 40 do not exist, and common specifications referred to in Article 41 are not available;
+
+(b)
+
+the provider has not applied, or has applied only part of, the harmonised standard;
+
+(c)
+
+the common specifications referred to in point (a) exist, but the provider has not applied them;
+
+(d)
+
+one or more of the harmonised standards referred to in point (a) has been published with a restriction, and only on the part of the standard that was restricted.
+
+For the purposes of the conformity assessment procedure referred to in Annex VII, the provider may choose any of the notified bodies. However, where the high-risk AI system is intended to be put into service by law enforcement, immigration or asylum authorities or by Union institutions, bodies, offices or agencies, the market surveillance authority referred to in

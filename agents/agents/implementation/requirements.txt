@@ -1,0 +1,22 @@
+# Governance AI Agent - Requirements
+
+# Core dependencies
+pyyaml>=6.0.0
+python-dotenv>=1.0.0
+
+# LLM API clients (choose based on your needs)
+google-generativeai>=0.3.0  # For Gemini
+openai>=1.0.0               # For OpenAI/ChatGPT
+anthropic>=0.8.0            # For Claude
+
+# Optional: For enhanced functionality
+requests>=2.31.0
+rich>=13.0.0                # For better CLI formatting
+typer>=0.9.0                # For advanced CLI
+pydantic>=2.0.0             # For data validation
+
+# Development dependencies (optional)
+pytest>=7.4.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0
