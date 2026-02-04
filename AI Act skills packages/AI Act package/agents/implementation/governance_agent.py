@@ -29,6 +29,7 @@ class AgentConfig:
     temperature: float = 0.7
     max_tokens: int = 4096
     skills_base_path: Optional[str] = None
+    skills_paths: List[str] = field(default_factory=list)  # Support multiple skill directories
 
 
 @dataclass
@@ -75,9 +76,21 @@ class GovernanceAIAgent:
         # Try to load API keys from environment
         config.api_key = os.getenv("GEMINI_API_KEY") or os.getenv("OPENAI_API_KEY")
 
-        # Set skills base path
+        # Set skills base path (backward compatibility)
+        # From implementation/ go up to "AI Act package/"
         current_dir = Path(__file__).parent.parent.parent
         config.skills_base_path = str(current_dir)
+
+        # Set multiple skills paths to search
+        # 1. AI Act skills packages directory
+        config.skills_paths.append(str(current_dir))
+
+        # 2. Root-level skills folder (if exists)
+        # From implementation/ go up 4 levels to repository root
+        repo_root = Path(__file__).parent.parent.parent.parent.parent
+        root_skills_dir = repo_root / "skills"
+        if root_skills_dir.exists():
+            config.skills_paths.append(str(root_skills_dir))
 
         return config
 
@@ -88,22 +101,43 @@ class GovernanceAIAgent:
         return None
 
     def _discover_skills(self):
-        """Discover and load metadata for all available skills"""
-        if not self.config.skills_base_path:
+        """Discover and load metadata for all available skills from multiple directories"""
+        # Determine which paths to search
+        search_paths = []
+
+        # Use skills_paths if available (new multi-path approach)
+        if self.config.skills_paths:
+            search_paths = self.config.skills_paths
+        # Fall back to single skills_base_path for backward compatibility
+        elif self.config.skills_base_path:
+            search_paths = [self.config.skills_base_path]
+        else:
             return
 
-        skills_path = Path(self.config.skills_base_path)
+        # Track discovered skill names to avoid duplicates
+        discovered_skills = set()
 
-        # Search for all SKILL.md files
-        skill_files = list(skills_path.rglob("SKILL.md"))
+        # Search all configured paths
+        for base_path in search_paths:
+            skills_path = Path(base_path)
+            if not skills_path.exists():
+                continue
 
-        for skill_file in skill_files:
-            try:
-                skill_metadata = self._parse_skill_file(skill_file)
-                if skill_metadata:
-                    self.skills[skill_metadata.name] = skill_metadata
-            except Exception as e:
-                print(f"Warning: Could not load skill from {skill_file}: {e}")
+            # Search for all SKILL.md files in this path
+            skill_files = list(skills_path.rglob("SKILL.md"))
+
+            for skill_file in skill_files:
+                try:
+                    skill_metadata = self._parse_skill_file(skill_file)
+                    if skill_metadata:
+                        # Only add if not already discovered (prevents duplicates)
+                        if skill_metadata.name not in discovered_skills:
+                            self.skills[skill_metadata.name] = skill_metadata
+                            discovered_skills.add(skill_metadata.name)
+                        else:
+                            print(f"Info: Skipping duplicate skill '{skill_metadata.name}' from {skill_file}")
+                except Exception as e:
+                    print(f"Warning: Could not load skill from {skill_file}: {e}")
 
     def _parse_skill_file(self, file_path: Path) -> Optional[SkillMetadata]:
         """Parse a SKILL.md file and extract metadata"""

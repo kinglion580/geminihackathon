@@ -62,3 +62,9 @@ oversight_records/DEC-*.json
 oversight_records/CON-*.json
 oversight_records/OVR-*.json
 oversight_records/demo_report.md
+# Exclude snapshot test files due to disk space constraints
+packages/cli/src/__tests__/__snapshots__/
+packages/cli/src/__tests__/*/__ snapshots__/
+
+# Git backup folder
+.git.backup/
